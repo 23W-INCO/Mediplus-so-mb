@@ -5,8 +5,4 @@ Explore a world of health and well-being at Mediplus Health Hub. Discover a rang
 Mediviz is your trusted companion in the pursuit of optimal health. Our cutting-edge app revolutionizes the way you engage with healthcare, seamlessly connecting you to a world of personalized wellness. From intuitive health data visualization to tailored insights, Mediviz empowers you to take control of your well-being. Whether it's tracking your fitness milestones, monitoring vital health metrics, or accessing personalized healthcare recommendations, Mediviz ensures you're always in the driver's seat of your health journey. Discover a new era of proactive healthcare with Mediviz – where your well-being is as unique as you are.
 
 ## Sample Visualization idea from Mediviz:
-<iframe src="https://codesandbox.io/embed/bar-chart-race-trial-429mls?fontsize=14&hidenavigation=1&theme=dark&view=preview"
-     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
-     title="bar-chart-race (trial)"
-     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
+[Visualization Example](https://codesandbox.io/embed/bar-chart-race-trial-429mls?fontsize=14&hidenavigation=1&theme=dark&view=preview)
