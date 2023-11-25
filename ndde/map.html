@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {
+        'packages': ['geochart'],
+      });
+      google.charts.setOnLoadCallback(drawRegionsMap);
+
+      function drawRegionsMap(selectedDecade) {
+        // Load the data from the JSON file
+        $.getJSON('natural-disasters-countries.json', function (jsonData) {
+          // Filter data based on the selected year
+          var filteredData = jsonData.filter(function (entry) {
+            return entry.Year === selectedDecade;
+          });
+
+          // Create a DataTable from the filtered data
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Country');
+          data.addColumn('number', 'Deaths');
+
+          data.addRows(filteredData.map(function (entry) {
+            return [entry.Country, entry['Number of deaths from disasters']];
+          }));
+
+          var options = {
+            colorAxis: {
+                colors: ['green', 'blue', 'red'], // Customize the colors here
+                datalessRegionColor: 'lightgray', // Set color for countries with no data
+                datalessRegionLabel: 'No data', // Set label for countries with no data
+            },
+          };
+
+          var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+          chart.draw(data, options);
+        });
+      }
+
+      // Function to update the chart when the user changes the year
+      function updateChart() {
+        var selectedDecade = parseInt(document.getElementById('yearInput').value);
+
+        // Check if the entered value is a valid year
+        if (!isNaN(selectedDecade)) {
+          drawRegionsMap(selectedDecade);
+        } else {
+          alert('Please enter a valid decade.');
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Natural Disasters Data Explorer</h1>
+    <!-- Input box for entering the year -->
+    <label for="yearInput">Enter Decade:</label>
+    <input style="margin-bottom: 50;" type="text" id="yearInput" placeholder="Enter a decade">
+
+    <!-- Button to trigger chart update -->
+    <button onclick="updateChart()">Update Chart</button>
+
+    <!-- Chart container -->
+    <div id="regions_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
