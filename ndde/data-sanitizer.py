@@ -29,11 +29,11 @@ with open('natural-disasters.json', 'r') as file:
 
 # Step 2: Modify the data
 for entry in data:
-    if entry.get('Country') == 'South Sudan':
-        entry['Country'] = 'South Sudan'
+    if entry.get('Country') == "Czechia":
+        entry['Country'] = "Czechia"
 
 # Step 3: Create a new JSON file
-new_data = [entry for entry in data if entry.get('Country') == 'South Sudan']
+new_data = [entry for entry in data if entry.get('Country') == "Czechia"]
 
 with open('new_file.json', 'w') as new_file:
     json.dump(new_data, new_file, indent=2)
@@ -62,6 +62,7 @@ with open('natural-disasters-countries.json', 'w') as updated_file:
 print("Updated JSON file with new data.")
 '''
 
+'''
 import json
 
 # Read the JSON file
@@ -70,11 +71,12 @@ with open('natural-disasters-countries.json', 'r') as file:
 
 # Modify the data
 for entry in data:
-    if entry.get('Country') == 'South Sudan':
-        entry['Country'] = 'SS'
+    if entry.get('Country') == "Czechia":
+        entry['Country'] = 'Czech Republic'
 
 # Write the updated data back to the same JSON file
 with open('natural-disasters-countries.json', 'w') as file:
     json.dump(data, file, indent=2)
 
 print("JSON file updated.")
+'''
