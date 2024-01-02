@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,39 +54,49 @@
     var playInterval;
     var decades = [1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
 
-    function drawRegionsMap(selectedDecade) {
-      // Update the currentYear variable
-      currentYear = selectedDecade !== undefined ? `(${selectedDecade})` : "(Year)";
+        function drawRegionsMap(selectedDecade, selectedImpact) {
+        // Update the currentYear variable
+        currentYear = selectedDecade !== undefined ? `(${selectedDecade})` : "(Year)";
 
-      // Load the data from the JSON file
-      $.getJSON('natural-disasters-countries.json', function (jsonData) {
-        // Filter data based on the selected year
-        var filteredData = jsonData.filter(function (entry) {
-          return entry.Year === selectedDecade;
-        });
+        // Load the data from the JSON file
+        $.getJSON('natural-disasters-countries.json', function (jsonData) {
+            // Filter data based on the selected year and impact
+            var filteredData = jsonData.filter(function (entry) {
+            return entry.Year === selectedDecade;
+            });
 
-        // Create a DataTable from the filtered data
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Country');
-        data.addColumn('number', 'Deaths');
+            console.log('Filtered Data:', filteredData); // Log the data for debugging
 
-        data.addRows(filteredData.map(function (entry) {
-          return [entry.Country, entry['Number of deaths from disasters']];
-        }));
+            // Create a DataTable from the filtered data
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Country');
+            data.addColumn('number', 'Impact');
+
+            data.addRows(filteredData.map(function (entry) {
+            var impactValue = entry[selectedImpact];
+            // Check if the impact value is available and not undefined or empty
+            if (impactValue !== undefined && impactValue !== null && impactValue !== "") {
+                return [entry.Country, impactValue];
+            } else {
+                // If impact value is not available, set it to 0 or another default value
+                return [entry.Country, 0]; // You can change 0 to another default value if needed
+            }
+            }));
+
 
         var options = {
           colorAxis: {
             minValue: 0,
             colors: [
-              'lightgray',         // No data
-              '#9FB7BE',           // 0 to 1
-              '#FCD49E',           // 1 to 10
-              '#FDBC84',           // 10 to 100
-              '#FB8D59',           // 100 to 1000
-              '#EE6547',           // 1000 to 10000
-              '#D72F1F',           // 10000 to 1 million
-              '#990000',           // 1 million to 10 million
+              '#9EB7BE',           // 0 to 1
+              '#FDBC84',           // 1 to 10
+              '#FB8D59',           // 10 to 100
+              '#EE6547',           // 100 to 1000
+              '#D72F1F',           // 1000 to 10000
+              '#990000',           // 10000 to 1 million
+              '#990000',           // 1 million plus
             ],
+            values: [0, 1, 10, 100, 1000, 10000, 1000000] // Boundaries for the colors
           },
         };
 
@@ -98,7 +109,7 @@
         legend.innerHTML = ''; // Clear previous legend items
 
         var colorRange = options.colorAxis.colors;
-        var labels = ['No data', '0-1', '1-10', '10-100', '100-1000', '1000-10000', '10000-1M', '1M-10M'];
+        var labels = ['0-1', '1-10', '10-100', '100-1000', '1000-10000', '10000-1M', '1M+'];
 
         for (var i = 0; i < colorRange.length; i++) {
           var legendItem = document.createElement('div');
@@ -124,10 +135,11 @@
     // Function to update the chart when the user changes the year
     function updateChart() {
       var selectedDecade = parseInt(document.getElementById('yearInput').value);
+      var selectedImpact = document.getElementById('impactSelector').value;
 
       // Check if the entered value is a valid year within the specified range
       if (decades.includes(selectedDecade)) {
-        drawRegionsMap(selectedDecade);
+        drawRegionsMap(selectedDecade, selectedImpact);
       } else {
         alert('Please enter a valid decade within the range 1900, 1910 ... 2000, 2010, 2020.');
       }
@@ -143,12 +155,12 @@
 
       playInterval = setInterval(function () {
         if (index < decades.length) {
-          drawRegionsMap(decades[index]);
+          drawRegionsMap(decades[index], document.getElementById('impactSelector').value);
           index++;
         } else {
           clearInterval(playInterval); // Stop when reaching the end of the array
         }
-      }, 1000); // Set the interval duration (in milliseconds)
+      }, 200); // Set the interval duration (in milliseconds)
 
       // Clear the input field
       document.getElementById('yearInput').value = "";
@@ -159,7 +171,16 @@
 <body>
   <h1>Natural Disasters Data Explorer (NDDE)</h1>
 
-  <h2>Decadal average: Annual number of deaths from disasters, <span id="currentYear">(Year)</span></h2>
+  <h2>Decadal Average: Impact by
+    <select id="impactSelector">
+      <option value="Number of deaths from disasters" selected>Number of deaths</option>
+      <option value="Number of people injured from disasters">Number of people injured</option>
+      <option value="Number of total people affected by disasters">Total people affected</option>
+      <option value="Number of people left homeless from disasters">People left homeless</option>
+      <option value="Total economic damages from disasters as a share of GDP">Economic damages (as % of GDP)</option>
+    </select>
+    <span id="currentYear">(Year)</span>
+  </h2>
   <p>Disasters include all geophysical, meteorological and climate events including earthquakes, volcanic activity, landslides, drought, wildfires, storms, and flooding. Decadal figures are measured as the annual average over the subsequent ten-year period.</p>
 
   <!-- Input box for entering the year -->
@@ -178,4 +199,5 @@
   <!-- Legend container -->
   <div id="legend"></div>
 </body>
+
 </html>
