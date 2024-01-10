@@ -74,26 +74,39 @@
     var selectedDecade = decades[decades.length - 1]; // Default to the latest decade if no input
 
     var colorConfigurations = {
-        'Number of deaths': {
+        'Number of deaths from disasters': {
             colors: ['#9EB7BE', '#FCD49E', '#FDBC84', '#FB8D59', '#EE6547', '#D72F1F', '#990000'],
-            values: [0, 1, 10, 100, 1000, 10000, 1000000]
+            values: [0, 1, 10, 100, 1000, 10000, 1000000],
+            labels: ['0 - 1', '1 - 10', '10 - 100', '100 - 1,000', '1,000 - 10,000', '10,000 - 1 Million', '1 million - 10 million']
         },
-        'Number of people injured': {
+        'Number of people injured from disasters': {
             colors: ['#9EB7BE', '#D4B9DA','#C994C7', '#DF65B0', '#E6298A', '#CE1256', '#91003F'],
-            values: [0, 1, 100, 1000, 10000, 1000000]
+            values: [0, 1, 100, 1000, 10000, 100000, 1000000],
+            labels: ['0 - 1', '1 - 100', '100 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1 million', '1 million - 10 million']
         },
-        'Total people affected': {
+        'Number of total people affected by disasters': {
             colors: ['#9EB7BE', '#FEE0D2', '#FCBBA1', '#FC9272', '#FB6A49', '#EF3A2C', '#CA181D', '#99000D'],
-            values: [0, 1000, 10000, 100000, 1000000, 1000000, 10000000, 100000000]
+            values: [0, 1000, 10000, 100000, 1000000, 1000000, 10000000, 100000000],
+            labels: ['0 - 1', '1 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1 million', '1 million - 10 million', '10 million - 100 million', '100 million - 1 billion']
         },
-        'People left homeless': {
+        'Number of people left homeless from disasters': {
             colors: ['#9EB7BE', '#E5F4F8', '#CCECE6', '#9AD8C8', '#66C2A4', '#41AE76', '#228B44','#015824'],
-            values: [0, 1, 10, 100, 1000, 10000, 100000, 1000000]
+            values: [0, 1, 10, 100, 1000, 10000, 100000, 1000000],
+            labels: ['0 - 1', '1 - 10', '10 - 100', '100 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1 million', '1 million - 10 million']
         },
-        'Economic damages (as % of GDP)': {
+        'Total economic damages from disasters as a share of GDP': {
             colors: ['#FEEDDE', '#FDD0A2', '#FCAD6B', '#FD8D3C', '#F06912', '#D94801', '#8C2D04'],
-            values: [0, 0.01, 0.05, 0.1, 0.5, 1, 10]
+            values: [0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1],
+            labels: ['0 - 0.01%', '0.01 - 0.05%', '0.05 - 0.1%', '0.1 - 0.5%', '0.5 - 1.0%', '1 - 10%', '10 - 50%']
         },
+    };
+
+    var impactLabelMap = {
+        'Number of deaths from disasters': 'Deaths',
+        'Number of people injured from disasters': 'Injured',
+        'Number of total people affected by disasters': 'Affected',
+        'Number of people left homeless from disasters': 'Homeless',
+        'Total economic damages from disasters as a share of GDP': 'Economic Damages'
     };
 
     google.charts.setOnLoadCallback(function() {
@@ -103,41 +116,62 @@
 
     function drawRegionsMap(selectedImpact, options) {
         currentYear = selectedDecade !== undefined ? `(${selectedDecade})` : "(Year)";
-        selectedDecade = parseInt(document.getElementById('yearInput').value) || decades[decades.length - 1];  // Default to the first decade if no input
 
         // Load the data from the JSON file
         $.getJSON('natural-disasters-countries.json', function (jsonData) {
             // Filter data based on the selected year and impact
             var filteredData = jsonData.filter(function (entry) {
-            return entry.Year === selectedDecade;
+                return entry.Year === selectedDecade;
             });
-
-            console.log('Filtered Data:', filteredData); // Log the data for debugging
 
             // Create a DataTable from the filtered data
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Country');
             data.addColumn('number', 'Impact');
+            data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
 
-            data.addRows(filteredData.map(function (entry) {
-            var impactValue = entry[selectedImpact];
-            // Check if the impact value is available and not undefined or empty
-            if (impactValue !== undefined && impactValue !== null && impactValue !== "") {
-                return [entry.Country, impactValue];
+            // Formatter for whole numbers
+            var wholeNumberFormatter = new google.visualization.NumberFormat(
+                {decimalSymbol: '.', groupingSymbol: ',', fractionDigits: 0});
+
+            // Formatter for percentage
+            var percentageFormatter = new google.visualization.NumberFormat(
+                {pattern: '#,##0.00%', decimalSymbol: '.', groupingSymbol: ','});
+
+            // Apply formatter based on the type of impact
+            var formatter;
+            if (selectedImpact === 'Total economic damages from disasters as a share of GDP') {
+                formatter = percentageFormatter;
             } else {
-                // If impact value is not available, set it to 0 or another default value
-                return [entry.Country, 0]; // You can change 0 to another default value if needed
+                formatter = wholeNumberFormatter;
             }
-            }));
+
+            // Add rows to the DataTable
+            filteredData.forEach(function (entry) {
+                var impactValue = entry[selectedImpact];
+                var formattedImpact = impactValue !== undefined && impactValue !== null && impactValue !== "" ? parseFloat(impactValue) : 0;
+
+                if (selectedImpact === 'Total economic damages from disasters as a share of GDP') {
+                    formattedImpact /= 100; // Convert to a fraction for percentage formatting
+                }
+
+                var tooltipContent = `
+                    <div style="margin-top: -5px;">
+                        <span style="color: #636363;">${selectedDecade}</span><br><hr>
+                        <span style="color: #636363;">${impactLabelMap[selectedImpact]}:</span> <strong>${formattedImpact}</strong>
+                    </div>`;
+                data.addRow([entry.Country, formattedImpact, tooltipContent]);
+            });
+
+            // Format the 'Impact' column of the data
+            formatter.format(data, 1);
 
             var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
             chart.draw(data, options);
-            updateLegend(options);
+            updateLegend(selectedImpact, options);
 
-            // Make sure options is defined before calling updateLegend
-            if (options && options.colorAxis && options.colorAxis.colors) {
-                updateLegend(options); // Call updateLegend here after drawing the chart
-            }
+            // Update the current year in the header
+            document.getElementById('currentYear').textContent = currentYear;
         });
     }
 
@@ -148,15 +182,23 @@
                 colors: config.colors,
                 values: config.values
             },
+            tooltip: { isHtml: true }
         };
+
+        // Hide the legend if the selected impact is 'Total economic damages from disasters as a share of GDP'
+        if (selectedImpact === 'Total economic damages from disasters as a share of GDP') {
+            options.legend = 'none';
+        }
+        
         drawRegionsMap(selectedImpact, options);
     }
 
-    function updateLegend(options) {
+    function updateLegend(selectedImpact, options) {
         var legend = document.getElementById('legend');
         legend.innerHTML = ''; // Clear previous legend items
+
         var colorRange = options.colorAxis.colors;
-        var labels = ['0-1', '1-10', '10-100', '100-1000', '1000-10000', '10000-1M', '1M+']; // Adjust labels based on selected impact if necessary
+        var labels = colorConfigurations[selectedImpact].labels; // Fetch labels for the selected impact
 
         colorRange.forEach(function(color, index) {
             var legendItem = document.createElement('div');
@@ -172,6 +214,7 @@
         });
     }
 
+
     document.getElementById('impactSelector').addEventListener('change', function() {
         updateChartConfiguration(this.value);
     });
@@ -185,19 +228,24 @@
     }
 
     function playTimeLapse() {
-      clearInterval(playInterval); // Clear any existing interval
-      var index = 0;
-      playInterval = setInterval(function () {
-        if (index < decades.length) {
-          selectedDecade = decades[index];
-          var selectedImpact = document.getElementById('impactSelector').value;
-          updateChartConfiguration(selectedImpact);
-          index++;
-        } else {
-          clearInterval(playInterval); // Stop when reaching the end of the array
-        }
-      }, 200); // Set the interval duration (in milliseconds)
+        clearInterval(playInterval); // Clear any existing interval
+        var index = 0;
+        playInterval = setInterval(function () {
+            if (index < decades.length) {
+                selectedDecade = decades[index];
+                var selectedImpact = document.getElementById('impactSelector').value;
+                updateChartConfiguration(selectedImpact);
+                index++;
+            } else {
+            clearInterval(playInterval); // Stop when reaching the end of the array
+            }
+        }, 200); // Set the interval duration (in milliseconds)
+        
+        // Clear the input field
+        document.getElementById('yearInput').value = "";
     }
+
+
 
     // Make sure to attach the event listeners after the DOM is fully loaded
     google.charts.setOnLoadCallback(function() {
