@@ -1,0 +1,102 @@
+/* Overall Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    margin: 0;
+}
+
+/* Header Styling */
+h1 {
+    color: #444;
+    text-align: center;
+}
+
+h2 {
+    color: #555;
+    text-align: center;
+}
+
+/* Styling for Form Elements */
+label, select, input, button {
+    display: inline;
+    width: 20%;
+    padding: 10px;
+    margin: 5px auto 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+select, button {
+    cursor: pointer;
+    width: 20%;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#description {
+    color:#5B5B5B;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+    font-size: 15px;
+}
+
+/* Styling for Chart and Legend */
+#regions_div {
+    width: 100%;
+    max-width: 900px;
+    height: 500px;
+    margin: 25px auto;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#legend {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    padding: 10px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 900px;
+    text-align: center;
+}
+
+.legend-item {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    label, select {
+        width: 90%;
+    }
+    input {
+        display: inline;
+        width: auto;
+    }
+    button {
+        width: 100%;
+    }
+    #regions_div, #legend {
+        width: 90%;
+    }
+}
