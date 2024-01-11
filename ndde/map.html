@@ -130,30 +130,6 @@
             data.addColumn('number', 'Impact');
             data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
 
-            // Add rows to the DataTable
-            data.addRows(filteredData.map(function (entry) {
-                var impactValue = entry[selectedImpact];
-                var formattedImpact;
-                var tooltipContent;
-
-                if (selectedImpact === 'Total economic damages from disasters as a share of GDP') {
-                    formattedImpact = impactValue !== undefined && impactValue !== null && impactValue !== "" ? parseFloat(impactValue) / 100 : 0.0; // Convert to a fraction for percentage formatting
-                    tooltipContent = `
-                        <div style="margin-top: -5px;">
-                            <span style="color: #636363;">${selectedDecade}</span><br><hr>
-                            <span style="color: #636363;">${impactLabelMap[selectedImpact]}:</span> <strong>${formattedImpact}</strong>
-                        </div>`;
-                } else {
-                    formattedImpact = impactValue !== undefined && impactValue !== null && impactValue !== "" ? parseFloat(impactValue) : 0;
-                    tooltipContent = `
-                        <div style="margin-top: -5px;">
-                            <span style="color: #636363;">${selectedDecade}</span><br><hr>
-                            <span style="color: #636363;">${impactLabelMap[selectedImpact]}:</span> <strong>${formattedImpact}</strong>
-                        </div>`;
-                }
-                return [entry.Country, formattedImpact, tooltipContent];
-            }));
-
             // Formatter for whole numbers
             var wholeNumberFormatter = new google.visualization.NumberFormat(
                 {decimalSymbol: '.', groupingSymbol: ',', fractionDigits: 0});
@@ -162,12 +138,31 @@
             var percentageFormatter = new google.visualization.NumberFormat(
                 {pattern: '#,##0.00%', decimalSymbol: '.', groupingSymbol: ','});
 
-            // Apply formatter based on the type of impact
-            if (selectedImpact === 'Total economic damages from disasters as a share of GDP') {
-                percentageFormatter.format(data, 1); // Apply percentage formatting to the second column
-            } else {
-                wholeNumberFormatter.format(data, 1); // Apply whole number formatting
-            }
+            // Add rows to the DataTable
+            filteredData.forEach(function (entry) {
+                var impactValue = entry[selectedImpact];
+                var formattedImpact = impactValue !== undefined && impactValue !== null && impactValue !== "" ? parseFloat(impactValue) : 0;
+
+                var tooltipContent;
+
+                if (selectedImpact === 'Total economic damages from disasters as a share of GDP') {
+                    formattedImpact /= 100; // Convert to a fraction for percentage formatting
+                    // Format the impact value for the tooltip using the percentage formatter
+                    tooltipContent = `
+                        <div style="margin-top: -5px;">
+                            <span style="color: #636363;">${selectedDecade}</span><br><hr>
+                            <span style="color: #636363;">${impactLabelMap[selectedImpact]}:</span> <strong>${percentageFormatter.formatValue(formattedImpact)}</strong>
+                        </div>`;
+                } else {
+                    // Format the impact value for the tooltip using the whole number formatter
+                    tooltipContent = `
+                        <div style="margin-top: -5px;">
+                            <span style="color: #636363;">${selectedDecade}</span><br><hr>
+                            <span style="color: #636363;">${impactLabelMap[selectedImpact]}:</span> <strong>${wholeNumberFormatter.formatValue(formattedImpact)}</strong>
+                        </div>`;
+                }
+                data.addRow([entry.Country, formattedImpact, tooltipContent]);
+            });
 
             var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
             chart.draw(data, options);
@@ -222,12 +217,18 @@
         updateChartConfiguration(this.value);
     });
 
-
     function updateChart() {
-      var inputDecade = parseInt(document.getElementById('yearInput').value);
-      selectedDecade = decades.includes(inputDecade) ? inputDecade : selectedDecade;
-      var selectedImpact = document.getElementById('impactSelector').value;
-      updateChartConfiguration(selectedImpact);
+        var inputDecade = parseInt(document.getElementById('yearInput').value);
+
+        // Check if the entered value is a valid year within the specified range
+        if (decades.includes(inputDecade)) {
+            selectedDecade = inputDecade; // Update selectedDecade only if inputDecade is valid
+            var selectedImpact = document.getElementById('impactSelector').value;
+            updateChartConfiguration(selectedImpact);
+        } else {
+            alert('Please enter a valid decade within the range 1900, 1910 ... 2000, 2010, 2020.');
+            document.getElementById('yearInput').value = "";
+        }
     }
 
     function playTimeLapse() {
@@ -242,7 +243,7 @@
             } else {
             clearInterval(playInterval); // Stop when reaching the end of the array
             }
-        }, 200); // Set the interval duration (in milliseconds)
+        }, 750); // Set the interval duration (in milliseconds)
         
         // Clear the input field
         document.getElementById('yearInput').value = "";
@@ -250,12 +251,15 @@
 
 
 
-    // Make sure to attach the event listeners after the DOM is fully loaded
+    // Attach the event listeners after the DOM is fully loaded
     google.charts.setOnLoadCallback(function() {
-      var initialSelection = document.getElementById('impactSelector').value;
-      updateChartConfiguration(initialSelection);
-      document.getElementById('updateChartButton').addEventListener('click', updateChart);
-      document.getElementById('timeLapseButton').addEventListener('click', playTimeLapse);
+        var initialSelection = document.getElementById('impactSelector').value;
+        updateChartConfiguration(initialSelection);
+        document.getElementById('yearInput').addEventListener('keypress', function(event) {
+            if (event.keyCode === 13) { updateChart(); }
+        });
+        document.getElementById('updateChartButton').addEventListener('click', updateChart);
+        document.getElementById('timeLapseButton').addEventListener('click', playTimeLapse);
     });
   </script>
 </body>
