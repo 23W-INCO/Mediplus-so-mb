@@ -20,7 +20,7 @@ const colorConfigurations = {
     },
     'Number of total people affected by disasters': {
         colors: ['#9EB7BE', '#FEE0D2', '#FCBBA1', '#FC9272', '#FB6A49', '#EF3A2C', '#CA181D', '#99000D'],
-        values: [0, 1000, 10000, 100000, 1000000, 1000000, 10000000, 100000000],
+        values: [0, 1, 1000, 10000, 100000, 1000000, 10000000, 100000000],
         labels: ['0 - 1', '1 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1 million', '1 million - 10 million', '10 million - 100 million', '100 million - 1 billion']
     },
     'Number of people left homeless from disasters': {
