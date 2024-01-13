@@ -10,6 +10,10 @@ h1 {
   text-align: center;
 }
 
+button {
+  cursor: pointer;
+}
+
 #legend {
   font-size: 0.7em;
   letter-spacing: 0.1;

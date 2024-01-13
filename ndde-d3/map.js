@@ -4,13 +4,41 @@ const svg = d3.select("svg"),
 	height = svg.attr("height"),
 	path = d3.geoPath(),
 	data = d3.map(),
-	worldmap = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson",
+	GeoJSONUrl = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson",
 	disastersdata = "natural-disasters-decadal.csv";
 
-let centered, world;
+let centered, world, worldmap;
 
-// Year declaration (default)
-let year = 2020;
+function checkUrlStatus(url) {
+	const xhr = new XMLHttpRequest();
+	xhr.open('GET', url);
+  
+	xhr.onreadystatechange = function () {
+	  if (xhr.readyState === 4) {
+		if (xhr.status === 200) {
+		  console.log('GeoJSON data loaded from url successfully');
+		  return xhr.status;
+		} else {
+		  console.log('Reverted to loading GeoJSON data from local file - Status:', xhr.status, '- URL: ', GeoJSONUrl);
+		  return xhr.status;
+		}
+	  }
+	};
+
+	xhr.send();
+}
+
+// Assign worldmap based on GeoJSONUrl status for Fault-Tolerance
+if (checkUrlStatus(GeoJSONUrl) === "200") {
+	worldmap = GeoJSONUrl;
+} else {
+	worldmap = "world.geojson";
+}
+
+// Array of years (decades) computed using create_decades_array() function in ./data-sanitizer.py
+const decades = [1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020]; 
+// Year declaration (default: latest decade)
+let year = decades[decades.length - 1];
 
 // Variable to hold the currently selected impact data (default)
 let selectedImpact = 'Number of deaths from disasters';
@@ -58,18 +86,128 @@ function loadAndDisplayData(selectedYear, currentSelectedImpact) {
 // Initial map load with default values
 loadAndDisplayData(year, selectedImpact);
 
-// Update map based on year input and selected impact data from the user
-document.getElementById('updateMapButton').addEventListener('click', function() {
-    year = document.getElementById('yearInput').value;
-    selectedImpact = document.getElementById('dataSelect').value;
-	// Update color scale based on selected impact
-	colorScale = colorScales[selectedImpact];
+// Update map based on impact data selection change
+document.getElementById('dataSelect').addEventListener('change', function() {
+	year = parseInt(document.getElementById('yearInput').value);
+    selectedImpact = this.value;
     loadAndDisplayData(year, selectedImpact);
+});
+
+// Update map based on year input change
+document.getElementById('yearInput').addEventListener('change', function() {
+	year = parseInt(document.getElementById('yearInput').value);
+	let revertToYear;
+
+	function revertAction() {
+		alert('Please enter a valid decade within the range 1900, 1910 ... 2000, 2010, 2020.');
+		document.getElementById('yearInput').value = revertToYear;
+		loadAndDisplayData(revertToYear, selectedImpact);
+	}
+	
+	if (decades.includes(year)) {
+		loadAndDisplayData(year, selectedImpact);
+	} else if (year < decades[0]) {
+		revertToYear = decades[0];
+		revertAction();	// revert to the highest decade if decade entered is lower than last decade
+	} else if (year > decades[decades.length - 1]) {
+		revertToYear = decades[decades.length - 1];
+		revertAction();	// revert to the highest decade if decade entered is lower than last decade
+	} else {
+		for (let i = 0; i < decades.length - 1; i++) {
+			if (year >= decades[i] && year <= decades[i + 1]) {
+			  // Check which decade is closer and revert to it
+			  if (year - decades[i] <= decades[i + 1] - year) {
+				revertToYear = decades[i];
+				revertAction();
+			  } else {
+				revertToYear = decades[i + 1];
+				revertAction();
+			  }
+			}
+		}
+	}
 });
 
 // Declare the world variable
 world = svg.append("g")
 .attr("class", "world");
+
+
+// Time Lapse control
+let timeLapseInterval;
+const timeLapseDelay = 750; // Delay in milliseconds for time lapse
+let timeLapseStoppedByUser = false; // Flag to track if time lapse was stopped by the user
+let currentTimeLapseYearIndex = 0; // Variable to store the current year index of the time lapse
+
+// Function to update the map for a given year
+function updateTimeLapse(yearIndex) {
+    if (yearIndex >= decades.length) {
+        stopTimeLapse();
+        return;
+    }
+
+    const year = decades[yearIndex];
+    document.getElementById('yearInput').value = year;
+    loadAndDisplayData(year, selectedImpact);
+
+    // Set the next update if the current year is not the last one
+    timeLapseInterval = setTimeout(() => {
+        updateTimeLapse(yearIndex + 1);
+    }, timeLapseDelay);
+
+    // Update the current time lapse year index
+    currentTimeLapseYearIndex = yearIndex;
+}
+
+// Function to toggle between Play and Pause
+function toggleTimeLapse() {
+    const button = document.getElementById('playTimeLapseButton');
+    if (button.textContent === 'Play Time-Lapse') {
+        // If the current time lapse year index is at the end, start from the beginning
+        if (currentTimeLapseYearIndex >= decades.length) {
+            currentTimeLapseYearIndex = 0;
+        }
+        button.textContent = 'Pause Time-Lapse';
+        updateTimeLapse(currentTimeLapseYearIndex);
+    } else {
+        // Pause the time lapse
+        button.textContent = 'Play Time-Lapse';
+        clearTimeout(timeLapseInterval);
+        timeLapseStoppedByUser = true;
+    }
+}
+
+// Stop the time lapse
+function stopTimeLapse() {
+    clearTimeout(timeLapseInterval);
+    timeLapseStoppedByUser = true; // Set the flag to indicate user manual stop
+    document.getElementById('playTimeLapseButton').textContent = 'Play Time-Lapse';
+    currentTimeLapseYearIndex = 0; // Reset the year index
+}
+
+// Function to handle double click and reset to the latest year
+function resetToLatestYear() {
+	clearTimeout(timeLapseInterval); // Stop any ongoing time lapse
+    currentTimeLapseYearIndex = decades.length - 1; // Set to last index of decades
+    updateTimeLapse(currentTimeLapseYearIndex);
+    document.getElementById('playTimeLapseButton').textContent = 'Play Time-Lapse';
+    timeLapseStoppedByUser = true; // Indicate that the reset was user-initiated
+}
+
+// Ensure the DOM is fully loaded before attaching event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const playTimeLapseButton = document.getElementById('playTimeLapseButton');
+
+    // Set initial text for the button
+    playTimeLapseButton.textContent = 'Play Time-Lapse';
+
+    // Add event listener for single click to the Play/Pause button
+    playTimeLapseButton.addEventListener('click', toggleTimeLapse);
+
+    // Add event listener for double click to reset to the latest year
+    playTimeLapseButton.addEventListener('dblclick', resetToLatestYear);
+});
+
 
 
 // ----------------------------
