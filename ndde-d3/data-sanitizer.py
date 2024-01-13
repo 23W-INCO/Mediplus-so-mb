@@ -1,6 +1,7 @@
 import pandas as pd
 import pycountry
 
+csv_file_path = 'natural-disasters-decadal-raw.csv'
 
 def get_country_code(country_name, custom_mappings):
     if country_name in custom_mappings:
@@ -70,6 +71,25 @@ def add_country_codes(csv_file_path, output_file_path):
 
 
 # Run
-# csv_file_path = 'natural-disasters-decadal-raw.csv'
 # output_file_path = 'natural-disasters-decadal.csv'
 # add_country_codes(csv_file_path, output_file_path)
+
+
+
+# Function for determining min_year and max_year from csv data
+def create_decades_array(csvData):
+    # Read the "Year" column
+    years = pd.read_csv(csvData)['Year']
+
+    # Find the smallest and largest year
+    min_year = years.min()
+    max_year = years.max()
+
+    # Create an array of decades
+    decades = list(range(min_year, max_year + 1, 10))
+
+    return decades
+
+# Run
+decades = create_decades_array(csv_file_path)
+print(decades)
