@@ -101,6 +101,7 @@ document.getElementById('dataSelect').addEventListener('change', function() {
 // Update map based on year input change
 document.getElementById('yearInput').addEventListener('change', function() {
 	year = parseInt(document.getElementById('yearInput').value);
+	document.getElementById('yearSlider').value = year; // Update the year slider
 	let revertToYear;
 
 	function revertAction() {
@@ -133,6 +134,13 @@ document.getElementById('yearInput').addEventListener('change', function() {
 	}
 });
 
+// Update map based on year slider change
+document.getElementById('yearSlider').addEventListener('input', function() {
+    year = parseInt(this.value);
+    document.getElementById('yearInput').value = year; // Update the number input
+    loadAndDisplayData(year, selectedImpact);
+});
+
 // Declare the world variable
 world = svg.append("g")
 .attr("class", "world");
@@ -153,6 +161,7 @@ function updateTimeLapse(yearIndex) {
 
     const year = decades[yearIndex];
     document.getElementById('yearInput').value = year;
+	document.getElementById('yearSlider').value = year;
     loadAndDisplayData(year, selectedImpact);
 
     // Set the next update if the current year is not the last one
