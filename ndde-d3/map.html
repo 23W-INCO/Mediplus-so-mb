@@ -1,31 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Meta Tags -->
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="keywords" content="D3 Data Visualization">
+    <meta name="description" content="Your Gateway to Holistic Healthcare">
+    <meta name='copyright' content='NDDE by Mediplus © 2024, by somb. All rights reserved.'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>Natural Disasters Data Explorer</title>
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-    <link rel="stylesheet" href="map.css">
+    <link rel="stylesheet" href="test.css">
+    <link rel="icon" href="../img/favicon.png">
 </head>
 
 <body>
-    <div class="data-selector">
-        <label for="dataSelect">Select data to visualize:</label>
-        <select id="dataSelect">
-            <option value="Number of deaths from disasters">Deaths from disasters</option>
-            <option value="Number of people injured from disasters">People injured from disasters</option>
-            <option value="Number of total people affected by disasters">Total people affected by disasters</option>
-            <option value="Number of people left homeless from disasters">People left homeless from disasters</option>
-            <option value="Total economic damages from disasters as a share of GDP">Economic damages as a share of GDP</option>
-        </select>
-    </div>    
+    <div class="header-container">
+        <h1>Natural Disasters Data Explorer</h1>
+        <p id="description">Disasters include all geophysical, meteorological and climate events including earthquakes, 
+            volcanic activity, landslides, drought, wildfires, storms, and flooding. 
+            Decadal figures are measured as the annual average over the subsequent ten-year period.
+        </p>
+    </div>
+
+    <div class="selectors-container">
+        <div class="disaster-type-selector">
+            <label for="disasterTypeSelect">Disaster Type:</label>
+            <select id="disasterTypeSelect">
+                <option value="all disasters">All Disasters</option>
+                <option value="droughts">Droughts</option>
+                <option value="earthquakes">Earthquakes</option>
+                <option value="volcanoes">Volcanoes</option>
+                <option value="floods">Floods</option>
+                <option value="mass movements">Mass movements (dry)</option>
+                <option value="storms">Storms</option>
+                <option value="landslides">Landslides</option>
+                <option value="wildfires">Wildfires</option>
+                <option value="extreme temperatures">Extreme temperatures</option>
+            </select>
+        </div>
+        
+        <div class="impact-selector">
+            <label for="impactSelect">Impact:</label>
+            <select id="impactSelect">
+                <!-- Options will be dynamically loaded based on the disaster type selected -->
+            </select>
+        </div>
+    </div>
+     
     <div class="year-selector">
-        <label for="yearInput">Select year:</label>
+        <label for="yearInput">Year:</label>
         <input type="number" id="yearInput" min="1900" max="2020" step="10" value="2020">
         <input type="range" id="yearSlider" min="1900" max="2020" step="10" value="2020" list="tickmarks">
         <datalist id="tickmarks">
-            <!-- Tickmarks for each decade from 1900 to 2020 -->
             <option value="1900" label="1900"></option>
             <option value="1910" label="1910"></option>
             <option value="1920" label="1920"></option>
@@ -42,11 +72,24 @@
         </datalist>
         <button id="playTimeLapseButton" title="Double-click to reset">Play Time-Lapse</button>
     </div>
+
     <div class="map">
-        <h1>Natural Disasters Data Explorer</h1>
-        <svg id="my_dataviz" width="900" height="500"></svg>
+        <select id="continentSelect">
+            <option value="World">World</option>
+            <option value="Africa">Africa</option>
+            <option value="North America">North America</option>
+            <option value="South America">South America</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="Oceania">Oceania</option>
+        </select>
+        <svg width="900" height="500"></svg>
     </div>
     
-    <script src="map.js"></script>
+    <script src="test.js"></script>
+
+    <div class="footer-container">
+        <p>Designed by <strong><a href="https://github.com/so-mb" target="_blank" rel="noopener noreferrer">so-mb</a></strong> | View on <strong><a href="https://github.com/so-mb/Mediplus" target="_blank" rel="noopener noreferrer">GitHub</a></strong></p>
+    </div>
 </body>
 </html>
