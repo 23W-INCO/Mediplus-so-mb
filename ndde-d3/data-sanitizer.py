@@ -9,6 +9,8 @@
 
 import pandas as pd
 import pycountry
+import csv
+import json
 
 
 # Snippet for removing unsupported entities and adding codes to unrecognized countries 
@@ -57,7 +59,7 @@ def add_country_codes(csv_file_path, output_file_path):
     # Entities to be removed
     entities_to_remove = [
         'Africa', 'Asia', 'Czechoslovakia', 'East Germany', 'Europe',
-        'European Union (27)', 'High-Income countries', 'Low-income countries',
+        'European Union (27)', 'High-income countries', 'Low-income countries',
         'Lower-middle-income countries', 'North America', 'North Yemen', 'Oceania',
         'Serbia and Montenegro', 'South America', 'South Yemen', 'USSR',
         'Upper-middle-income countries', 'West Germany', 'World', 'Yugoslavia'
@@ -200,3 +202,287 @@ def create_decades_array(csvData):
 # Uncomment to Run
 # decades = create_decades_array(csv_file_path)
 # print(decades)
+
+
+
+# Function for converting csv file to csv file
+# CSV file path
+csv_file_path_3 = './csv/hxl-compliant-natural-disasters-decadal-data.csv'
+
+# JSON file path
+json_file_path = './json/hxl-compliant-natural-disasters-decadal-data.json'
+
+# Read CSV and convert to JSON
+data = []
+# with open(csv_file_path, 'r') as csv_file:
+#     csv_reader = csv.DictReader(csv_file)
+#     for row in csv_reader:
+#         data.append(row)
+
+# Write the JSON data to a file
+# with open(json_file_path, 'w') as json_file:
+#     json.dump(data, json_file)
+
+# print("CSV file has been converted to JSON.")
+
+
+
+# Function to create 'country name: country' code dict
+
+def read_csv_to_dict(file_path):
+    with open(file_path, mode='r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip the header row if your CSV has one
+        country_dict = {}
+        for row in reader:
+            country_name, country_code = row[0], row[1]
+            if country_name not in country_dict:
+                country_dict[country_name] = country_code
+    return country_dict
+
+# Uncomment to Run
+# country_code_dict = read_csv_to_dict(csv_file_path_2)
+# print(country_code_dict)
+
+
+
+# Snippet to create 'countries-selector' HTML dropdown
+data = {
+    "Afghanistan": "AFG",
+    "Albania": "ALB",
+    "Algeria": "DZA",
+    "American Samoa": "ASM",
+    "Angola": "AGO",
+    "Anguilla": "AIA",
+    "Antigua and Barbuda": "ATG",
+    "Argentina": "ARG",
+    "Armenia": "ARM",
+    "Australia": "AUS",
+    "Austria": "AUT",
+    "Azerbaijan": "AZE",
+    "Bahamas": "BHS",
+    "Bangladesh": "BGD",
+    "Barbados": "BRB",
+    "Belarus": "BLR",
+    "Belgium": "BEL",
+    "Belize": "BLZ",
+    "Benin": "BEN",
+    "Bermuda": "BMU",
+    "Bhutan": "BTN",
+    "Bolivia": "BOL",
+    "Bosnia and Herzegovina": "BIH",
+    "Botswana": "BWA",
+    "Brazil": "BRA",
+    "British Virgin Islands": "VGB",
+    "Brunei": "BRN",
+    "Bulgaria": "BGR",
+    "Burkina Faso": "BFA",
+    "Burundi": "BDI",
+    "Cambodia": "KHM",
+    "Cameroon": "CMR",
+    "Canada": "CAN",
+    "Cape Verde": "CPV",
+    "Cayman Islands": "CYM",
+    "Central African Republic": "CAF",
+    "Chad": "TCD",
+    "Chile": "CHL",
+    "China": "CHN",
+    "Colombia": "COL",
+    "Comoros": "COM",
+    "Congo": "COG",
+    "Cook Islands": "COK",
+    "Costa Rica": "CRI",
+    "Cote d'Ivoire": "CIV",
+    "Croatia": "HRV",
+    "Cuba": "CUB",
+    "Cyprus": "CYP",
+    "Czechia": "CZE",
+    "Democratic Republic of Congo": "COD",
+    "Denmark": "DNK",
+    "Djibouti": "DJI",
+    "Dominica": "DMA",
+    "Dominican Republic": "DOM",
+    "East Timor": "TLS",
+    "Ecuador": "ECU",
+    "Egypt": "EGY",
+    "El Salvador": "SLV",
+    "Eritrea": "ERI",
+    "Estonia": "EST",
+    "Eswatini": "SWZ",
+    "Ethiopia": "ETH",
+    "Fiji": "FJI",
+    "Finland": "FIN",
+    "France": "FRA",
+    "French Guiana": "GUF",
+    "French Polynesia": "PYF",
+    "Gabon": "GAB",
+    "Gambia": "GMB",
+    "Georgia": "GEO",
+    "Germany": "DEU",
+    "Ghana": "GHA",
+    "Greece": "GRC",
+    "Grenada": "GRD",
+    "Guadeloupe": "GLP",
+    "Guam": "GUM",
+    "Guatemala": "GTM",
+    "Guinea": "GIN",
+    "Guinea-Bissau": "GNB",
+    "Guyana": "GUY",
+    "Haiti": "HTI",
+    "High-income countries": "",
+    "Honduras": "HND",
+    "Hong Kong": "HKG",
+    "Hungary": "HUN",
+    "Iceland": "ISL",
+    "India": "IND",
+    "Indonesia": "IDN",
+    "Iran": "IRN",
+    "Iraq": "IRQ",
+    "Ireland": "IRL",
+    "Isle of Man": "IMN",
+    "Israel": "ISR",
+    "Italy": "ITA",
+    "Jamaica": "JAM",
+    "Japan": "JPN",
+    "Jordan": "JOR",
+    "Kazakhstan": "KAZ",
+    "Kenya": "KEN",
+    "Kiribati": "KIR",
+    "Kuwait": "KWT",
+    "Kyrgyzstan": "KGZ",
+    "Laos": "LAO",
+    "Latvia": "LVA",
+    "Lebanon": "LBN",
+    "Lesotho": "LSO",
+    "Liberia": "LBR",
+    "Libya": "LBY",
+    "Lithuania": "LTU",
+    "Luxembourg": "LUX",
+    "Macao": "MAC",
+    "Madagascar": "MDG",
+    "Malawi": "MWI",
+    "Malaysia": "MYS",
+    "Maldives": "MDV",
+    "Mali": "MLI",
+    "Malta": "MLT",
+    "Marshall Islands": "MHL",
+    "Martinique": "MTQ",
+    "Mauritania": "MRT",
+    "Mauritius": "MUS",
+    "Mexico": "MEX",
+    "Micronesia (country)": "FSM",
+    "Moldova": "MDA",
+    "Mongolia": "MNG",
+    "Montenegro": "MNE",
+    "Montserrat": "MSR",
+    "Morocco": "MAR",
+    "Mozambique": "MOZ",
+    "Myanmar": "MMR",
+    "Namibia": "NAM",
+    "Nepal": "NPL",
+    "Netherlands": "NLD",
+    "Netherlands Antilles": "ANT",
+    "New Caledonia": "NCL",
+    "New Zealand": "NZL",
+    "Nicaragua": "NIC",
+    "Niger": "NER",
+    "Nigeria": "NGA",
+    "Niue": "NIU",
+    "North Korea": "PRK",
+    "North Macedonia": "MKD",
+    "Northern Mariana Islands": "MNP",
+    "Norway": "NOR",
+    "Oman": "OMN",
+    "Pakistan": "PAK",
+    "Palau": "PLW",
+    "Palestine": "PSE",
+    "Panama": "PAN",
+    "Papua New Guinea": "PNG",
+    "Paraguay": "PRY",
+    "Peru": "PER",
+    "Philippines": "PHL",
+    "Poland": "POL",
+    "Portugal": "PRT",
+    "Puerto Rico": "PRI",
+    "Qatar": "QAT",
+    "Reunion": "REU",
+    "Romania": "ROU",
+    "Russia": "RUS",
+    "Rwanda": "RWA",
+    "Saint Barthelemy": "BLM",
+    "Saint Helena": "SHN",
+    "Saint Kitts and Nevis": "KNA",
+    "Saint Lucia": "LCA",
+    "Saint Martin (French part)": "MAF",
+    "Saint Vincent and the Grenadines": "VCT",
+    "Samoa": "WSM",
+    "Sao Tome and Principe": "STP",
+    "Saudi Arabia": "SAU",
+    "Senegal": "SEN",
+    "Serbia": "SRB",
+    "Seychelles": "SYC",
+    "Sierra Leone": "SLE",
+    "Sint Maarten (Dutch part)": "SXM",
+    "Slovakia": "SVK",
+    "Slovenia": "SVN",
+    "Solomon Islands": "SLB",
+    "Somalia": "SOM",
+    "South Africa": "ZAF",
+    "South Korea": "KOR",
+    "South Sudan": "SSD",
+    "Spain": "ESP",
+    "Sri Lanka": "LKA",
+    "Sudan": "SDN",
+    "Suriname": "SUR",
+    "Sweden": "SWE",
+    "Switzerland": "CHE",
+    "Syria": "SYN",
+    "Taiwan": "TWN",
+    "Tajikistan": "TJK",
+    "Tanzania": "TZA",
+    "Thailand": "THA",
+    "Togo": "TGO",
+    "Tokelau": "TKL",
+    "Tonga": "TON",
+    "Trinidad and Tobago": "TTO",
+    "Tunisia": "TUN",
+    "Turkey": "TUR",
+    "Turkmenistan": "TKM",
+    "Turks and Caicos Islands": "TCA",
+    "Tuvalu": "TUV",
+    "Uganda": "UGA",
+    "Ukraine": "UKR",
+    "United Arab Emirates": "ARE",
+    "United Kingdom": "GBR",
+    "United States": "USA",
+    "United States Virgin Islands": "VIR",
+    "Uruguay": "URY",
+    "Uzbekistan": "UZB",
+    "Vanuatu": "VUT",
+    "Venezuela": "VEN",
+    "Vietnam": "VNM",
+    "Wallis and Futuna": "WLF",
+    "Yemen": "YEM",
+    "Zambia": "ZMB",
+    "Zimbabwe": "ZWE",
+}
+
+# Start building the HTML code
+html_code = '<select>\n'
+
+# Add the placeholder option as the first option
+html_code += '    <option value="" label="Select">Select</option>\n'
+
+# Iterate through the JSON data and create <option> elements
+for country_name, country_code in data.items():
+    # Skip the entry with an empty country code
+    if country_code != "":
+        # Create the <option> element
+        option = f'    <option value="{country_code}" label="{country_name}">{country_name}</option>'
+        html_code += option + '\n'
+
+# <select> close tag
+html_code += '</select>'
+
+# Uncomment to Print the generated HTML code
+# print(html_code)
