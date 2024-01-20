@@ -73,12 +73,7 @@ box-shadow: 1px 1px 15px #000000;
 width: 100%;
 max-width: 900px;
 height: 550px;
-margin: 25px auto;
-/* position: absolute;
-margin-top: 50%;
-left: 50%;
-top: 50%;
-transform: translate(-50%, -50%); */
+margin: 50px auto;
 }
 
 svg {
@@ -114,14 +109,14 @@ transform-origin: center;
 
 
 /* Other Classes' Styling */
-.year-selector {
+.year-country-container {
 margin-bottom: 10px;
 text-align: center;
 }
 
-.year-selector label,
-.year-selector input,
-.year-selector button {
+.year-country-container label,
+.year-country-container input,
+.year-country-container button {
 margin-right: 5px;
 }
 

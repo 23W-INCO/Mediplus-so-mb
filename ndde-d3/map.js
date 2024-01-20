@@ -5,6 +5,7 @@
 // Import utitlities (functions and variables) from utils.js
 import { 	worldmap,
 	continents,
+	countriesInContinents,
 	decades,
 	disasterImpactMap,
 	colorScales
@@ -71,6 +72,7 @@ impactSelect.selectedIndex = 0;
 
 // Trigger the update of the visualization
 loadAndDisplayData(year, impacts[impactSelect.selectedIndex]);
+updateDisplayMessage();
 }
 
 // Invoke Function for Initial population of impact options
@@ -80,19 +82,78 @@ updateImpactOptions('all disasters'); // Default to 'all disasters'
 // Function to Load external data and boot
 function loadAndDisplayData(selectedYear, currentSelectedImpact) {
 data.clear(); // Clear the previous data
-d3.queue()
-.defer(d3.json, worldmap)
-.defer(d3.csv, disastersdata, function(d) {
-	if(d.Year == selectedYear) {
+
+// Load both JSON and CSV files using Promises
+Promise.all([
+d3.json(worldmap),
+d3.csv(disastersdata)
+]).then(function(files) {
+const [worldData, disastersData] = files;
+
+// Process your data
+disastersData.forEach(d => {
+	if (d.Year == selectedYear) {
 		// Use the selected impact data for the visualization
 		data.set(d['Country code'], +d[currentSelectedImpact]);
 	}
-})
-.await(ready);
+});
+
+// Call the ready function with the loaded data
+ready(null, worldData); // Pass 'null' as the error argument since Promise.all() would have rejected in case of an error
+updateDisplayMessage();
+}).catch(function(error) {
+console.error('Error loading the data: ', error);
+});
 }
 
 // Invoke Function for Initial map load with default values
 loadAndDisplayData(year, selectedImpact);
+
+
+// Function to construct and update the display message
+function updateDisplayMessage() {
+const selectedImpact = document.getElementById('impactSelect').value;
+const selectedYear = year;
+const countrySelector = document.getElementById("countrySelector");
+const selectedCountryCode = countrySelector.value;
+const selectedCountryLabel = countrySelector.options[countrySelector.selectedIndex].label || "";
+
+// Exit the function if no country is selected or if it is the placeholder value
+if (!selectedCountryCode || selectedCountryCode.trim() === "") {
+document.getElementById('displayMessage').innerHTML = '';
+return;
+}
+
+// Fetch the data for the selected country from your JSON file
+d3.json('./json/hxl-compliant-natural-disasters-decadal-data.json').then(function(data) {
+// Find the data for the selected country and year
+const countryData = data.find(item => item['Country code'] === selectedCountryCode && item.Year == selectedYear);
+
+let value = "Unknown";
+if (countryData && countryData[selectedImpact]) {
+	value = Math.round(countryData[selectedImpact]).toLocaleString();
+}
+
+// Convert a string to title case
+const toTitleCase = (str) => str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+
+let message;
+
+if (selectedImpact.includes("economic")) {
+	message = `<strong>${selectedImpact}</strong> in ${selectedCountryLabel} between ${selectedYear - 10} and ${selectedYear} was <strong>${value}</strong>`;
+} else {
+	const capitalizedImpact = toTitleCase(selectedImpact);
+	message = `<strong>Total ${capitalizedImpact}</strong> in ${selectedCountryLabel} between ${selectedYear - 10} and ${selectedYear} was <strong>${value}</strong>`;
+}
+
+const displayMessageDiv = document.getElementById('displayMessage');
+displayMessageDiv.innerHTML = message;
+
+// Show the clear button
+const clearButton = document.getElementById('clearButton');
+clearButton.style.display = 'inline';
+});
+}
 
 
 
@@ -173,6 +234,7 @@ document.getElementById('disasterTypeSelect').addEventListener('change', functio
 const currentSelectedImpactIndex = document.getElementById('impactSelect').selectedIndex;
 // Update impact options based on the selected disaster type and the current selected impact index
 updateImpactOptions(this.value, currentSelectedImpactIndex);
+updateDisplayMessage();
 });
 
 
@@ -180,6 +242,7 @@ updateImpactOptions(this.value, currentSelectedImpactIndex);
 document.getElementById('impactSelect').addEventListener('change', function() {
 selectedImpact = this.value;
 loadAndDisplayData(year, selectedImpact);
+updateDisplayMessage();
 });
 
 
@@ -217,6 +280,8 @@ for (let i = 0; i < decades.length - 1; i++) {
 	}
 }
 }
+
+updateDisplayMessage();
 });
 
 
@@ -225,6 +290,7 @@ document.getElementById('yearSlider').addEventListener('input', function() {
 year = parseInt(this.value);
 document.getElementById('yearInput').value = year; // Update the number input
 loadAndDisplayData(year, selectedImpact);
+updateDisplayMessage();
 });
 
 
@@ -242,6 +308,26 @@ playTimeLapseButton.addEventListener('click', toggleTimeLapse);
 playTimeLapseButton.addEventListener('dblclick', resetToLatestYear);
 });
 
+
+// Event listener for country selection change
+document.getElementById('countrySelector').addEventListener('change', function() {
+updateDisplayMessage(this.value);
+});
+
+
+// Add an event listener to the "x" button
+document.getElementById('clearButton').addEventListener('click', function() {
+// Clear the display message
+const displayMessageDiv = document.getElementById('displayMessage');
+displayMessageDiv.innerHTML = '';
+
+// Reset the dropdown to "Select Country"
+const countrySelector = document.getElementById('countrySelector');
+countrySelector.selectedIndex = 0;
+
+// Hide the clear button
+this.style.display = 'none';
+});
 
 
 // -------------------------------
@@ -522,6 +608,7 @@ world.attr('transform', d3.event.transform);
 world.selectAll('path').style('stroke-width', 1 / k);
 }
 
+
 // Define the click behaviour
 let centered;
 
@@ -567,4 +654,64 @@ const transform = d3.zoomIdentity
 svg.transition()
 .duration(750)
 .call(zoom.transform, transform);
+}
+
+
+// Zoom to Country's Continent
+function zoomToCountryContinent(countryCode) {
+// Find the continent that contains the selected country code
+let continent;
+for (const key in countriesInContinents) {
+if (countriesInContinents[key].some(country => country.code === countryCode)) {
+	continent = key;
+	break;
+}
+}
+
+if (continent) {
+// Zoom to the continent
+zoomToContinent(continent);
+
+// Update the continentSelect dropdown to select the corresponding continent option
+document.getElementById('continentSelect').value = continent;
+}
+}
+
+
+// Event Listener for the select element when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+const countrySelect = document.getElementById('countrySelector');
+const clearButton = document.getElementById('clearButton');
+
+// Event listener for the "change" event
+countrySelect.addEventListener('change', function() {
+if (this.value) {
+	// If a country is selected, zoom to it
+	zoomToCountryContinent(this.value);
+} else {
+	// If the selection is cleared, zoom to "World"
+	zoomToWorld();
+}
+});
+
+// Event listener for the "click" event on the clear button
+clearButton.addEventListener('click', function() {
+// Clear the selection in the country select element
+countrySelect.selectedIndex = 0;
+// Zoom back to "World"
+zoomToWorld();
+// Update the continentSelect dropdown to select the corresponding continent option
+document.getElementById('continentSelect').value = 'World';
+});
+
+// Handle the initial value (when the page loads)
+if (countrySelect.selectedIndex === 0) {
+zoomToWorld(); // Call the zoomToWorld function when the default option is selected
+}
+});
+
+
+// Function to zoom back to "World"
+function zoomToWorld() {
+zoomToContinent('World')
 }
