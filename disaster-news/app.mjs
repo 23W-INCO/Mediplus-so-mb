@@ -2,10 +2,13 @@ import express from 'express';
 import fetch from 'node-fetch';
 import { DateTime } from 'luxon';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const app = express();
 app.use(express.static('public')); // Serve static files from the 'public' directory
 const port = 3000; // or some other port conventionally used for development: 3001, 5000, 8080, 8000
-const NEWS_API_KEYS = ["31cc0b19279e436eb30c0e434e379a28", "e1891e03afba41dc8ee7ccd2d5cdb23c"]; // two keys for fault-tolerance
+const NEWS_API_KEYS = process.env.NEWS_API_KEYS.split(',') // two keys for fault-tolerance
 
 // Function to fetch relevant infos from IP
 async function fetchIpInfo() {
@@ -86,7 +89,7 @@ function dateTimeFormatter(dateStr) {
 
 // Function to Fetch Weather Data
 async function fetchWeatherData(ipAddress) {
-    const WEATHER_API_KEY = '17873d767696d100d30b8835d70a56e9';
+    const OPEN_WEATHER_API_KEY = process.env.OPEN_WEATHER_API_KEY;
 
     const response = await fetch('https://ipinfo.io/json');
     const data = await response.json();
@@ -95,7 +98,7 @@ async function fetchWeatherData(ipAddress) {
     const lat = parseFloat(location[0]);
     const lon = parseFloat(location[1]);
 
-    const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`);
+    const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPEN_WEATHER_API_KEY}&units=metric`);
     const weatherData = await weatherResponse.json();
     return weatherData;
 }
