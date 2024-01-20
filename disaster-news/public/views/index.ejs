@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>News Headlines</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">NDDE</span> Top Disaster News</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="/?disasterType=<%= disasterType %>&skip=0">NEWS</a></li>
+                    <li><a href="#" target="_blank" rel="noopener noreferrer">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1><%= greeting %>!</h1>
+        <em><strong>Your Location's Weather Info.</strong> Last refreshed on <%= dateTimeFormatter(time) %> <%= timezone %>&nbsp;</em>
+        <span class="tooltip">&#9432
+            <span class="tooltiptext">Based on your Public IP Address<br>(<%= ipAddress %> - <%= city %>, <%= region %>)</span>
+        </span>
+        
+        <div class="weather-info">
+            <% if (weatherData && weatherData.main) { %>
+                <div class="weather-item temperature">
+                    <span class="weather-value"><%= Math.round(weatherData.main.temp) %>°C</span>
+                    <div class="high-low">
+                        <span><b>High:</b> <%= Math.round(weatherData.main.temp_max) %>°C</span>
+                        <span><b>Low:</b> <%= Math.round(weatherData.main.temp_min) %>°C</span>
+                    </div>
+                </div>
+                <div class="weather-item details">
+                    <span><b>Pressure:</b> <%= (weatherData.main.pressure).toLocaleString() %> hPa</span>
+                    <span><b>Humidity:</b> <%= weatherData.main.humidity %>%</span>
+                    <span><b>Wind:</b> <%= Math.round(weatherData.wind.speed) %> km/h</span>
+                </div>
+                <div class="weather-item forecast">
+                    <span><%= weatherData.weather[0].main %></span>
+                    <span><b>Description:</b> <%= weatherData.weather[0].description %></span>
+                    <span><b>Sunrise:</b> <%= new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %></span>
+                    <span><b>Sunset:</b> <%= new Date(weatherData.sys.sunset * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %></span>
+                </div>
+            <% } else { %>
+                <p>Weather info not available.</p>
+            <% } %>
+        </div>
+
+        <span class="disaster-type-latest">
+            <h1>Latest Headlines on</h1>
+            <form action="/" method="get" class="disaster-type-dropdown">
+                <select name="disasterType" onchange="this.form.submit()">
+                    <option value="natural disasters" <% if (disasterType === 'natural disasters') { %>selected<% } %>>All Disasters</option>
+                    <option value="drought" <% if (disasterType === 'drought') { %>selected<% } %>>Droughts</option>
+                    <option value="earthquake" <% if (disasterType === 'earthquake') { %>selected<% } %>>Earthquakes</option>
+                    <option value="volcano" <% if (disasterType === 'volcano') { %>selected<% } %>>Volcanoes</option>
+                    <option value="flood" <% if (disasterType === 'flood') { %>selected<% } %>>Floods</option>
+                    <option value="mass movement" <% if (disasterType === 'mass movement') { %>selected<% } %>>Mass Movements</option>
+                    <option value="storm" <% if (disasterType === 'storm') { %>selected<% } %>>Storms</option>
+                    <option value="landslide" <% if (disasterType === 'landslide') { %>selected<% } %>>Landslides</option>
+                    <option value="wildfire" <% if (disasterType === 'wildfire') { %>selected<% } %>>Wildfires</option>
+                    <option value="extreme temperature" <% if (disasterType === 'extreme temperature') { %>selected<% } %>>Extreme Temperatures</option>
+                </select>
+            </form>
+        </span>
+    
+        <div>
+            <% if (headlines && headlines.length > 0) { %>
+                <% headlines.forEach(function(headline) { %>
+                    <ul class="articles">
+                        <li>
+                            <h2><%= headline.title %></h2>
+                            <img src="<%= headline.urlToImage %>" alt="Featured Image" class="news-featured-img">
+                            <p><strong>Source: </strong><%= headline.source.name %></p>
+                            <p><strong>Published: </strong><%= dateTimeFormatter(headline.publishedAt) %></p>
+                            <p><strong>Description: </strong><%= headline.description %></p>
+                            <a href="<%= headline.url %>" target="_blank" rel="noopener noreferrer"><button class="read-more-btn">Read News</button></a>
+                        </li>
+                    </ul>
+                <% }) %>
+            <% } else { %>
+                <p>No more headlines available.</p>
+            <% } %>
+        </div>
+
+        <div class="pagination">
+            <% if (skip === 0 && !isLastPage) { %>
+                <a href="/?disasterType=<%= disasterType %>&skip=10"><strong>Load More News &nbsp;<span class="arrow right">&rarr;</span></strong></a>
+            <% } else { %>
+                <% if (prevSkip !== null) { %>
+                    <a href="/?disasterType=<%= disasterType %>&skip=<%= prevSkip %>"><strong><span class="arrow left">&larr;</span>&nbsp; Previous Page</strong></a>
+                    <% if (!isLastPage)%>
+                <% } %>
+                <% if (!isLastPage && nextSkip !== null) { %>
+                    <a href="/?disasterType=<%= disasterType %>&skip=<%= nextSkip %>"><strong>Next Page &nbsp;<span class="arrow right">&rarr;</span></strong></a>
+                <% } else if (isLastPage) { %>
+                    <a href="/?disasterType=<%= disasterType %>&skip=0"><strong>Back To Latest News</strong></a>
+                <% } %>
+            <% } %>
+        </div>        
+    </div>
+    
+    <footer class="footer-container">
+        <div class="footer-content">
+            <p><strong>NDDE Top Disaster News &copy; <span id="current-year"></span></strong></p>
+            <p id="disclaimer">
+                <b>Disclaimer:</b> The news displayed is based on keyword searches
+                and may not always precisely match the selected
+                disaster type due to variations in news categorization.
+            </p>
+        </div>
+        <p>Designed by <strong><a href="https://www.linkedin.com/in/som-mbuko/" target="_blank" rel="noopener noreferrer">so-mb</a></strong> | <strong><a href="https://github.com/so-mb/Mediplus" target="_blank" rel="noopener noreferrer">View on GitHub</a></strong></p>
+    </footer>    
+
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
