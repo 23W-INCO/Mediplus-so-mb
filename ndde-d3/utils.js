@@ -369,6 +369,206 @@ export const disasterImpactMap = {
 
 
 // ----------------------------
+// disasterImpactData
+// ----------------------------
+
+// Object of objects for storing mapping of impacts to disaster types
+export const disasterImpactData = {
+    deaths: (data) => ({
+        'All disasters': +data['Number of deaths from disasters'],
+        'Droughts': +data['Number of deaths from drought'],
+        'Earthquakes': +data['Number of deaths from earthquakes'],
+        'Volcanoes': +data['Number of deaths from volcanic activity'],
+        'Floods': +data['Number of deaths from floods'],
+        'Mass movements (dry)': +data['Number of deaths from mass movements'],
+        'Storms': +data['Number of deaths from storms'],
+        'Landslides': +data['Number of deaths from landslides'],
+        'Wildfires': +data['Number of deaths from wildfires'],
+        'Extreme temperatures': +data['Number of deaths from extreme temperatures']
+    }),
+    injured: (data) => ({
+        'All disasters': +data['Number of people injured from disasters'],
+        'Droughts': +data['Number of people injured from drought'],
+        'Earthquakes': +data['Number of people injured from earthquakes'],
+        'Volcanoes': +data['Number of people injured from volcanic activity'],
+        'Floods': +data['Number of people injured from floods'],
+        'Mass movements (dry)': +data['Number of people injured from mass movements'],
+        'Storms': +data['Number of people injured from storms'],
+        'Landslides': +data['Number of people injured from landslides'],
+        'Wildfires': +data['Number of people injured from wildfires'],
+        'Extreme temperatures': +data['Number of people injured from extreme temperatures']
+    }),
+    affected: (data) => ({
+        'All disasters': +data['Number of total people affected by disasters'],
+        'Droughts': +data['Number of total people affected by drought'],
+        'Earthquakes': +data['Number of total people affected by earthquakes'],
+        'Volcanoes': +data['Number of total people affected by volcanic activity'],
+        'Floods': +data['Number of total people affected by floods'],
+        'Mass movements (dry)': +data['Number of total people affected by mass movements'],
+        'Storms': +data['Number of total people affected by storms'],
+        'Landslides': +data['Number of total people affected by landslides'],
+        'Wildfires': +data['Number of total people affected by wildfires'],
+        'Extreme temperatures': +data['Number of total people affected by extreme temperatures']
+    }),
+    homeless: (data) => ({
+        'All disasters': +data['Number of people left homeless from disasters'],
+        'Droughts': +data['Number of people left homeless from drought'],
+        'Earthquakes': +data['Number of people left homeless from earthquakes'],
+        'Volcanoes': +data['Number of people left homeless from volcanic activity'],
+        'Floods': +data['Number of people left homeless from floods'],
+        'Mass movements (dry)': +data['Number of people left homeless from mass movements'],
+        'Storms': +data['Number of people left homeless from storms'],
+        'Landslides': +data['Number of people left homeless from landslides'],
+        'Wildfires': +data['Number of people left homeless from wildfires'],
+        'Extreme temperatures': +data['Number of people left homeless from extreme temperatures']
+    }),
+    'economic damages': (data) => ({
+        'All disasters': +data['Total economic damages from disasters as a share of GDP'],
+        'Droughts': +data['Total economic damages from drought as a share of GDP'],
+        'Earthquakes': +data['Total economic damages from earthquakes as a share of GDP'],
+        'Volcanoes': +data['Total economic damages from volcanic activity as a share of GDP'],
+        'Floods': +data['Total economic damages from floods as a share of GDP'],
+        'Mass movements (dry)': +data['Total economic damages from mass movements as a share of GDP'],
+        'Storms': +data['Total economic damages from storms as a share of GDP'],
+        'Landslides': +data['Total economic damages from landslides as a share of GDP'],
+        'Wildfires': +data['Total economic damages from wildfires as a share of GDP'],
+        'Extreme temperatures': +data['Total economic damages from extreme temperatures as a share of GDP']
+    })
+};
+
+
+
+
+/* export const disasterImpactData = {
+    'deaths': {
+        'All disasters': +data['Number of deaths from disasters'],
+        'Droughts': +data['Number of deaths from drought'],
+        'Earthquakes': +data['Number of deaths from earthquakes'],
+        'Volcanoes': +data['Number of deaths from volcanic activity'],
+        'Floods': +data['Number of deaths from floods'],
+        'Mass movements (dry)': +data['Number of deaths from mass movements'],
+        'Storms': +data['Number of deaths from storms'],
+        'Landslides': +data['Number of deaths from landslides'],
+        'Wildfires': +data['Number of deaths from wildfires'],
+        'Extreme temperatures': +data['Number of deaths from extreme temperatures']
+    },
+    'injured': {
+        'All disasters': +data['Number of people injured from disasters'],
+        'Droughts': +data['Number of people injured from drought'],
+        'Earthquakes': +data['Number of people injured from earthquakes'],
+        'Volcanoes': +data['Number of people injured from volcanic activity'],
+        'Floods': +data['Number of people injured from floods'],
+        'Mass movements (dry)': +data['Number of people injured from mass movements'],
+        'Storms': +data['Number of people injured from storms'],
+        'Landslides': +data['Number of people injured from landslides'],
+        'Wildfires': +data['Number of people injured from wildfires'],
+        'Extreme temperatures': +data['Number of people injured from extreme temperatures']
+    },
+    'affected': {
+        'All disasters': +data['Number of total people affected by disasters'],
+        'Droughts': +data['Number of total people affected by drought'],
+        'Earthquakes': +data['Number of total people affected by earthquakes'],
+        'Volcanoes': +data['Number of total people affected by volcanic activity'],
+        'Floods': +data['Number of total people affected by floods'],
+        'Mass movements (dry)': +data['Number of total people affected by mass movements'],
+        'Storms': +data['Number of total people affected by storms'],
+        'Landslides': +data['Number of total people affected by landslides'],
+        'Wildfires': +data['Number of total people affected by wildfires'],
+        'Extreme temperatures': +data['Number of total people affected by extreme temperatures']
+    },
+    'homeless': {
+        'All disasters': +data['Number of people left homeless from disasters'],
+        'Droughts': +data['Number of people left homeless from drought'],
+        'Earthquakes': +data['Number of people left homeless from earthquakes'],
+        'Volcanoes': +data['Number of people left homeless from volcanic activity'],
+        'Floods': +data['Number of people left homeless from floods'],
+        'Mass movements (dry)': +data['Number of people left homeless from mass movements'],
+        'Storms': +data['Number of people left homeless from storms'],
+        'Landslides': +data['Number of people left homeless from landslides'],
+        'Wildfires': +data['Number of people left homeless from wildfires'],
+        'Extreme temperatures': +data['Number of people left homeless from extreme temperatures']
+    },
+    'economic': {
+        'All disasters': +data['Total economic damages from disasters as a share of GDP'],
+        'Droughts': +data['Total economic damages from drought as a share of GDP'],
+        'Earthquakes': +data['Total economic damages from earthquakes as a share of GDP'],
+        'Volcanoes': +data['Total economic damages from volcanic activity as a share of GDP'],
+        'Floods': +data['Total economic damages from floods as a share of GDP'],
+        'Mass movements (dry)': +data['Total economic damages from mass movements as a share of GDP'],
+        'Storms': +data['Total economic damages from storms as a share of GDP'],
+        'Landslides': +data['Total economic damages from landslides as a share of GDP'],
+        'Wildfires': +data['Total economic damages from wildfires as a share of GDP'],
+        'Extreme temperatures': +data['Total economic damages from extreme temperatures as a share of GDP']
+    }
+}; */
+
+/* export const disasterImpactData = {
+    'deaths': [
+      'Number of deaths from disasters',
+      'Number of deaths from drought',
+      'Number of deaths from earthquakes',
+      'Number of deaths from volcanic activity',
+      'Number of deaths from floods',
+      'Number of deaths from mass movements',
+      'Number of deaths from storms',
+      'Number of deaths from landslides',
+      'Number of deaths from wildfires',
+      'Number of deaths from extreme temperatures'
+    ],
+    'injured': [
+      'Number of people injured from disasters',
+      'Number of people injured from drought',
+      'Number of people injured from earthquakes',
+      'Number of people injured from volcanic activity',
+      'Number of people injured from floods',
+      'Number of people injured from mass movements',
+      'Number of people injured from storms',
+      'Number of people injured from landslides',
+      'Number of people injured from wildfires',
+      'Number of people injured from extreme temperatures'
+    ],
+    'affected': [
+      'Number of total people affected from disasters',
+      'Number of total people affected from drought',
+      'Number of total people affected from earthquakes',
+      'Number of total people affected from volcanic activity',
+      'Number of total people affected from floods',
+      'Number of total people affected from mass movements',
+      'Number of total people affected from storms',
+      'Number of total people affected from landslides',
+      'Number of total people affected from wildfires',
+      'Number of total people affected from extreme temperatures'
+    ],
+    'homeless': [
+      'Number of people left homeless from disasters',
+      'Number of people left homeless from drought',
+      'Number of people left homeless from earthquakes',
+      'Number of people left homeless from volcanic activity',
+      'Number of people left homeless from floods',
+      'Number of people left homeless from mass movements',
+      'Number of people left homeless from storms',
+      'Number of people left homeless from landslides',
+      'Number of people left homeless from wildfires',
+      'Number of people left homeless from extreme temperatures'
+    ],
+    'economic': [
+      'Total economic damages from disasters as a share of GDP',
+      'Total economic damages from drought as a share of GDP',
+      'Total economic damages from earthquakes as a share of GDP',
+      'Total economic damages from volcanic activity as a share of GDP',
+      'Total economic damages from floods as a share of GDP',
+      'Total economic damages from mass movements as a share of GDP',
+      'Total economic damages from storms as a share of GDP',
+      'Total economic damages from landslides as a share of GDP',
+      'Total economic damages from wildfires as a share of GDP',
+      'Total economic damages from extreme temperatures as a share of GDP'
+    ]
+}; */
+  
+
+
+
+// ----------------------------
 // colorScales
 // ----------------------------
 
