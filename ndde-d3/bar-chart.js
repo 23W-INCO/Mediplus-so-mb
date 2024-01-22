@@ -55,7 +55,7 @@ function createChart(disasterData, yAxisLabel) {
     }));
 
     // Log the chartData to the console to check the values
-    console.log("Chart Data:", chartData);
+    // console.log("Chart Data:", chartData);
 
     // Prepare the scales for positional and color encodings.
     const x = d3.scaleBand()
@@ -248,35 +248,75 @@ document.getElementById('clearButton').addEventListener('click', createEmptyChar
 // ----------------------------
 
 // Function to update the chart for a given year
-function updateChartForYear(year) {
-    let selectedYear = +document.getElementById('yearSlider').value; // or 'yearInput'
+function updateChartForYear(year, updateLabel = true) {
     let selectedCountry = document.getElementById('countrySelector').value;
     let selectedImpactType = document.getElementById('impactSelect').value;
     let selectedCountryName = document.getElementById('countrySelector').options[document.getElementById('countrySelector').selectedIndex].textContent;
 
+    let yAxisLabel;
+
+    if (updateLabel) {
+        let matchingImpactType = impactTypeKeys.find(key => selectedImpactType.includes(key));
+        matchingImpactType = matchingImpactType.toUpperCase();
+        yAxisLabel = matchingImpactType + " (" + selectedCountryName + ", " + year + ")";
+    }
+
     if (selectedCountry && selectedImpactType) {
         loadData(year, selectedCountry, selectedImpactType).then(disasterData => {
-            let matchingImpactType = impactTypeKeys.find(key => selectedImpactType.includes(key));
-            matchingImpactType = matchingImpactType.toUpperCase()
-            let yAxisLabel = matchingImpactType + " (" + selectedCountryName + ", " + selectedYear + ")";
-    
             createChart(disasterData, yAxisLabel);
         });
     }
 }
 
-// Button click handler to play the time-lapse
+// Playback state
+let playbackState = {
+    intervalId: null,
+    index: 0,
+    playing: false
+};
+
+// Function to start the time-lapse
+function startPlayback() {
+    if (!playbackState.playing) {
+        playbackState.playing = true;
+        playbackState.intervalId = setInterval(() => {
+            updateChartForYear(decades[playbackState.index]); // Update the chart with the current year
+            playbackState.index++; // Move to the next year
+
+            // If end of the decades array is reached, stop at the last year
+            if (playbackState.index >= decades.length) {
+                playbackState.index = decades.length - 1; // Set to last index
+                resetPlayback();
+            }
+        }, 750);
+    }
+}
+
+// Function to pause the time-lapse
+function pausePlayback() {
+    if (playbackState.playing) {
+        clearInterval(playbackState.intervalId);
+        playbackState.playing = false;
+    }
+}
+
+// Function to reset the time-lapse
+function resetPlayback() {
+    pausePlayback();
+    playbackState.index = decades.length - 1; // Reset to latest year
+    updateChartForYear(decades[playbackState.index]);
+}
+
+// Single click to toggle play/pause
 document.getElementById('playTimeLapseButton').addEventListener('click', function() {
-    let index = 0; // Start from the first year
+    if (playbackState.playing) {
+        pausePlayback();
+    } else {
+        startPlayback();
+    }
+});
 
-    const interval = setInterval(() => {
-        updateChartForYear(decades[index]); // Update the chart with the current year
-
-        index++; // Move to the next year
-
-        // If end of the decades array is reached, clear the interval
-        if (index >= decades.length) {
-            clearInterval(interval);
-        }
-    }, 750);
+// Double click to reset
+document.getElementById('playTimeLapseButton').addEventListener('dblclick', function() {
+    resetPlayback();
 });
