@@ -1,4 +1,4 @@
-import { disasterImpactData } from './utils.js';
+import { disasterImpactData, decades } from './utils.js';
 
 // Get all keys from disasterImpactData
 let impactTypeKeys = Object.keys(disasterImpactData);
@@ -55,7 +55,7 @@ function createChart(disasterData, yAxisLabel) {
     }));
 
     // Log the chartData to the console to check the values
-    // console.log("Chart Data:", chartData);
+    console.log("Chart Data:", chartData);
 
     // Prepare the scales for positional and color encodings.
     const x = d3.scaleBand()
@@ -241,3 +241,42 @@ document.getElementById('impactSelect').addEventListener('change', updateChart);
 // Event Listener for Clear Button
 document.getElementById('clearButton').addEventListener('click', createEmptyChart)
 
+
+
+// ----------------------------
+// Time-Lapse Control
+// ----------------------------
+
+// Function to update the chart for a given year
+function updateChartForYear(year) {
+    let selectedYear = +document.getElementById('yearSlider').value; // or 'yearInput'
+    let selectedCountry = document.getElementById('countrySelector').value;
+    let selectedImpactType = document.getElementById('impactSelect').value;
+    let selectedCountryName = document.getElementById('countrySelector').options[document.getElementById('countrySelector').selectedIndex].textContent;
+
+    if (selectedCountry && selectedImpactType) {
+        loadData(year, selectedCountry, selectedImpactType).then(disasterData => {
+            let matchingImpactType = impactTypeKeys.find(key => selectedImpactType.includes(key));
+            matchingImpactType = matchingImpactType.toUpperCase()
+            let yAxisLabel = matchingImpactType + " (" + selectedCountryName + ", " + selectedYear + ")";
+    
+            createChart(disasterData, yAxisLabel);
+        });
+    }
+}
+
+// Button click handler to play the time-lapse
+document.getElementById('playTimeLapseButton').addEventListener('click', function() {
+    let index = 0; // Start from the first year
+
+    const interval = setInterval(() => {
+        updateChartForYear(decades[index]); // Update the chart with the current year
+
+        index++; // Move to the next year
+
+        // If end of the decades array is reached, clear the interval
+        if (index >= decades.length) {
+            clearInterval(interval);
+        }
+    }, 750);
+});
