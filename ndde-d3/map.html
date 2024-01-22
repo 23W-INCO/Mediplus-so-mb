@@ -15,6 +15,7 @@
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
     <link rel="stylesheet" href="map.css">
     <link rel="icon" href="../img/favicon.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -70,7 +71,9 @@
             <option value="2010" label="2010"></option>
             <option value="2020" label="2020"></option>
         </datalist>
-        <button id="playTimeLapseButton" title="Double-click to reset">Play Time-Lapse</button>
+        <button id="playTimeLapseButton" title="Double-click to reset">
+            <i class="fa-solid fa-play"></i>&nbsp; Play Time-Lapse
+        </button>
     </div>
 
     <div class="year-country-container">
@@ -301,21 +304,41 @@
         <div id="displayMessage"></div>
     </div>
     
-
-    <div class="map">
-        <select id="continentSelect">
-            <option value="World">World</option>
-            <option value="Africa">Africa</option>
-            <option value="North America">North America</option>
-            <option value="South America">South America</option>
-            <option value="Asia">Asia</option>
-            <option value="Europe">Europe</option>
-            <option value="Oceania">Oceania</option>
-        </select>
-        <svg width="900" height="500"></svg>
+    <!-- Tab links -->
+    <div class="tab">
+        <button class="tablinks" id="defaultOpen" onclick="openTab(event, 'Tab1')">
+            <i class="fa-solid fa-earth-americas"></i>&nbsp; Map
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'Tab2')">
+            <i class="fa-solid fa-chart-column"></i>&nbsp; Chart
+        </button>
+    </div>
+    
+    <!-- Tab content -->
+    <div id="Tab1" class="tabcontent">
+        <div class="map">
+            <select id="continentSelect">
+                <option value="World">World</option>
+                <option value="Africa">Africa</option>
+                <option value="North America">North America</option>
+                <option value="South America">South America</option>
+                <option value="Asia">Asia</option>
+                <option value="Europe">Europe</option>
+                <option value="Oceania">Oceania</option>
+            </select>
+            <svg width="900" height="500"></svg>
+        </div>
+    </div>
+    
+    <div id="Tab2" class="tabcontent">
+        <div class="bar-chart-container" id="barChart"></div>
+        <div id="barChartTooltip" class="tooltip" style="opacity: 0; position: absolute; pointer-events: none;"></div>
+        <p>Values are presented in their original form.</p>
     </div>
     
     <script type="module" src="map.js"></script>
+    <script type="module" src="bar-chart.js"></script>
+    <script src="main.js"></script>
 
     <div class="footer-container">
         <p>Designed by <strong><a href="https://www.linkedin.com/in/som-mbuko/" target="_blank" rel="noopener noreferrer">so-mb</a></strong> | View on <strong><a href="https://github.com/so-mb/Mediplus" target="_blank" rel="noopener noreferrer">GitHub</a></strong></p>

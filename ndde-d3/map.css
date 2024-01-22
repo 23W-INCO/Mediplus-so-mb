@@ -63,6 +63,49 @@ button:hover {
   margin-bottom: 20px;
 }
 
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  margin: auto 100px;
+  border: 1px solid #ccc;
+  background-color: #e7e7e7;
+  border-radius: 4px 4px 0 0;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: #808080;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  margin: 10px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #666666;
+  box-shadow: none;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #015CC8;;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  margin: auto 100px;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
 
 /* Map Styling */
 .map {
@@ -141,6 +184,13 @@ margin-bottom: 5px;
 }
 
 
+/* Bar Chart Container Styling */
+.bar-chart-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 50px auto;
+}
+
 /* Footer Styling */
 .footer-container{
   text-align: center;
@@ -181,7 +231,6 @@ button:focus {
   border-color: #0056b3;
   box-shadow: 0 0 8px rgba(1, 92, 200, 0.5);
 }
-
 
 /* Clearfix for floated elements */
 .clearfix::after {

@@ -131,7 +131,11 @@ const countryData = data.find(item => item['Country code'] === selectedCountryCo
 
 let value = "Unknown";
 if (countryData && countryData[selectedImpact]) {
-	value = Math.round(countryData[selectedImpact]).toLocaleString();
+	if (selectedImpact.includes('economic')) {
+		value = countryData[selectedImpact].toFixed(2);
+	} else{
+		value = Math.round(countryData[selectedImpact]).toLocaleString();
+	} 
 }
 
 // Convert a string to title case
@@ -140,7 +144,11 @@ const toTitleCase = (str) => str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUppe
 let message;
 
 if (selectedImpact.includes("economic")) {
-	message = `<strong>${selectedImpact}</strong> in ${selectedCountryLabel} between ${selectedYear - 10} and ${selectedYear} was <strong>${value}</strong>`;
+	if (value === "Unknown") {
+		message = `<strong>${selectedImpact}</strong> in ${selectedCountryLabel} between ${selectedYear - 10} and ${selectedYear} was <strong>${value}</strong>`;
+	} else {
+		message = `<strong>${selectedImpact}</strong> in ${selectedCountryLabel} between ${selectedYear - 10} and ${selectedYear} was <strong>${value}%</strong>`;
+	}
 } else {
 	const capitalizedImpact = toTitleCase(selectedImpact);
 	message = `<strong>Total ${capitalizedImpact}</strong> in ${selectedCountryLabel} between ${selectedYear - 10} and ${selectedYear} was <strong>${value}</strong>`;
@@ -190,16 +198,16 @@ currentTimeLapseYearIndex = yearIndex;
 // Function to Toggle between Play and Pause
 function toggleTimeLapse() {
 const button = document.getElementById('playTimeLapseButton');
-if (button.textContent === 'Play Time-Lapse') {
+if (button.textContent.includes('Play Time-Lapse')) {
 // If the current time lapse year index is at the end, start from the beginning
 if (currentTimeLapseYearIndex >= decades.length) {
 	currentTimeLapseYearIndex = 0;
 }
-button.textContent = 'Pause Time-Lapse';
+button.innerHTML = '<i class="fa-solid fa-pause"></i>&nbsp; Pause Time-Lapse';
 updateTimeLapse(currentTimeLapseYearIndex);
 } else {
 // Pause the time lapse
-button.textContent = 'Play Time-Lapse';
+button.innerHTML = '<i class="fa-solid fa-play"></i>&nbsp; Play Time-Lapse';
 clearTimeout(timeLapseInterval);
 timeLapseStoppedByUser = true;
 }
@@ -209,7 +217,8 @@ timeLapseStoppedByUser = true;
 function stopTimeLapse() {
 clearTimeout(timeLapseInterval);
 timeLapseStoppedByUser = true; // Set the flag to indicate user manual stop
-document.getElementById('playTimeLapseButton').textContent = 'Play Time-Lapse';
+const button = document.getElementById('playTimeLapseButton');
+button.innerHTML = '<i class="fa-solid fa-play"></i>&nbsp; Play Time-Lapse';
 currentTimeLapseYearIndex = 0; // Reset the year index
 }
 
@@ -218,7 +227,8 @@ function resetToLatestYear() {
 clearTimeout(timeLapseInterval); // Stop any ongoing time lapse
 currentTimeLapseYearIndex = decades.length - 1; // Set to last index of decades
 updateTimeLapse(currentTimeLapseYearIndex);
-document.getElementById('playTimeLapseButton').textContent = 'Play Time-Lapse';
+const button = document.getElementById('playTimeLapseButton');
+button.innerHTML = '<i class="fa-solid fa-play"></i>&nbsp; Play Time-Lapse';
 timeLapseStoppedByUser = true; // Indicate that the reset was user-initiated
 }
 
@@ -328,6 +338,7 @@ countrySelector.selectedIndex = 0;
 // Hide the clear button
 this.style.display = 'none';
 });
+
 
 
 // -------------------------------
