@@ -1,39 +1,4 @@
 // ----------------------------
-// worldmap
-// ----------------------------
-
-export let worldmap;
-const GeoJSONUrl = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
-
-// Function to check url status of GeoJSONUrl
-function checkUrlStatus(url) {
-	const xhr = new XMLHttpRequest();
-	xhr.open('GET', url);
-  
-	xhr.onreadystatechange = function () {
-	  if (xhr.readyState === 4) {
-		if (xhr.status === 200) {
-		  return xhr.status;
-		} else {
-		  console.log("Couldn't load GeoJSON data from url - Reverted to local source file - Status:", xhr.status, "- check URL: ", GeoJSONUrl);
-		  return xhr.status;
-		}
-	  }
-	};
-
-	xhr.send();
-}
-
-// Assign worldmap based on GeoJSONUrl status or revert to world.geojson file
-if (checkUrlStatus(GeoJSONUrl) === "200") {
-	worldmap = GeoJSONUrl;
-} else {
-	worldmap = "world.geojson";
-}
-
-
-
-// ----------------------------
 // continents
 // ----------------------------
 

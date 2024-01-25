@@ -3,8 +3,7 @@
 // ----------------------------
 
 // Import utitlities (functions and variables) from utils.js
-import { 	worldmap,
-	continents,
+import { continents,
 	countriesInContinents,
 	decades,
 	disasterImpactMap,
@@ -13,11 +12,12 @@ import { 	worldmap,
 
 // Global Variables
 const svg = d3.select("svg"),
-width = svg.attr("width"),
-height = svg.attr("height"),
-path = d3.geoPath(),
-data = d3.map(),
-disastersdata = "./csv/hxl-compliant-natural-disasters-decadal-data.csv";
+	width = svg.attr("width"),
+	height = svg.attr("height"),
+	path = d3.geoPath(),
+	data = d3.map(),
+	worldmap = "world.geojson",
+	disastersdata = "./csv/hxl-compliant-natural-disasters-decadal-data.csv";
 
 // Year declaration (default: latest decade)
 let year = decades[decades.length - 1];
