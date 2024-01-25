@@ -161,30 +161,7 @@ button:hover {
   background-color: #015cc8;
 }
 
-/* Style the tab content */
-/* .tabcontent {
-  display: none;
-  padding: 6px 12px;
-  margin: auto 100px;
-  border: 1px solid #ccc;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-} */
-
-/* Map Styling */
-/* .map {
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #4d8dc4;
-  box-shadow: 1px 1px 15px #000000;
-  width: 100%;
-  max-width: 900px;
-  height: 100%;
-  margin: 50px auto;
-  overflow: auto;
-} */
-
-/* Style the tab content */
+/* Tab Content Styling */
 .tabcontent {
   display: none;
   padding: 20px;
