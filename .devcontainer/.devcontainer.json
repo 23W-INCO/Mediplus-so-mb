@@ -1,8 +1,0 @@
-{
-    "name": "Mediplus",
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
-    "postCreateCommand": "node /workspaces/Mediplus/disaster-news/app.mjs",
-    "forwardPorts": [5000]
-}
