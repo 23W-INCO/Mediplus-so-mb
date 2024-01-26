@@ -1,8 +1,0 @@
-{
-    "name": "Mediplus",
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
-    "postCreateCommand": "http-server /workspace/NDDE -p 3000 & sleep 2 && code NDDE/index.html",
-    "forwardPorts": [3000]
-}
