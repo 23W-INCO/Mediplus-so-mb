@@ -8,7 +8,7 @@ URL to viewing the Live webpages deployed with GitHub pages:
 
 1. The code relevant to the data visualization is mostly located in the 'NDDE' directory. But feel free to look around :)
 
-2. Hash of latest commit as at the date of exam submission (26.01.2023, 15:00) = 
+2. Hash of second to latest commit (because I will commit this change after updating file) as at the date of exam submission (26.01.2023, 15:00) = `1d6b235a7deb609533f6218333f06307d23fa9e0` (short: `1d6b235`) with message "Upload Exam Submission Info"
 
 3. There seems to be a problem with the automated forwarded port url. Therefore on Loading my codespaces, on pwd = `/workspaces/Mediplus`, please run the following commands (on two separate Terminals)
 
