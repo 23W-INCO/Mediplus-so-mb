@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.static('public')); // Serve static files from the 'public' directory
-const port = 3000; // or some other port conventionally used for development: 3001, 5000, 8080, 8000
+const port = 5000; // or some other port conventionally used for development: 3000, 3001, 8080, 8000
 const NEWS_API_KEYS = process.env.NEWS_API_KEYS.split(',') // two keys for fault-tolerance
 
 // Function to fetch relevant infos from IP
