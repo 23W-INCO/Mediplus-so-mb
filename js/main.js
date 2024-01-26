@@ -304,17 +304,17 @@ Version:	1.1
 			Google Maps JS
 		======================*/
 		var map = new GMaps({
-				el: '#map',
-				lat: 23.011245,
-				lng: 90.884780,
+				el: '#map', 
+				lat: 48.429761994082455,
+				lng: 12.942057768197863,
 				scrollwheel: false,
 			});
 			map.addMarker({
-				lat: 23.011245,
-				lng: 90.884780,
+				lat: 48.429761994082455,
+				lng: 12.942057768197863,
 				title: 'Marker with InfoWindow',
 				infoWindow: {
-				content: '<p>welcome to Medipro</p>'
+				content: '<p>welcome to Mediplus</p>'
 			}
 		
 		});
